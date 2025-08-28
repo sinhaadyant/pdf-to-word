@@ -1,0 +1,23 @@
+{
+  "name": "pdf2docx-api",
+  "version": "1.0.0",
+  "description": "REST API for converting PDF to DOCX using pdf2docx",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "clean": "rm -rf uploads/* outputs/*",
+    "test-api": "curl http://localhost:3000/health"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["pdf", "docx", "converter", "api"],
+  "author": "Your Name",
+  "license": "MIT"
+}
