@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -34,17 +34,155 @@
             font-weight: 600;
             color: #34495e;
         }
-        input[type="file"] {
+        .upload-area {
             width: 100%;
-            padding: 15px;
+            min-height: 200px;
+            padding: 30px;
             border: 3px dashed #3498db;
             border-radius: 10px;
             background: #ecf0f1;
-            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #d5dbdb;
+        }
+        .upload-area.dragover {
+            border-color: #27ae60;
+            background: #d5f4e6;
+            transform: scale(1.02);
+        }
+        .upload-area input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .upload-text {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        .upload-hint {
+            font-size: 14px;
+            color: #95a5a6;
+        }
+        .file-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fafafa;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .file-item.error {
+            border-left-color: #e74c3c;
+            background: #fdf2f2;
+        }
+        .file-item.success {
+            border-left-color: #27ae60;
+            background: #f0f9f0;
+        }
+        .file-info {
+            flex: 1;
+        }
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .file-size {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .file-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-processing {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .remove-file {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .remove-file:hover {
+            background: #c0392b;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .mode-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
-        input[type="file"]:hover {
-            border-color: #2980b9;
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        .mode-btn:hover:not(.active) {
             background: #d5dbdb;
         }
         button {
@@ -98,296 +236,288 @@
             font-style: italic;
         }
         .api-info {
-            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 5px solid #3498db;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
         }
         .api-info h3 {
             margin-top: 0;
             color: #2c3e50;
-            font-size: 1.3em;
         }
-        .api-info pre {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid #dee2e6;
-            font-size: 14px;
+        .api-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .api-info li {
+            margin: 5px 0;
+            color: #555;
+        }
+        .download-links {
+            margin-top: 15px;
         }
         .download-link {
             display: inline-block;
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: #27ae60;
             color: white;
-            padding: 12px 24px;
+            padding: 8px 15px;
             text-decoration: none;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .download-link:hover {
-            background: linear-gradient(135deg, #20c997, #17a2b8);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-        .file-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 10px 0;
-            border-left: 4px solid #3498db;
-        }
-        .file-info p {
-            margin: 5px 0;
+            border-radius: 5px;
+            margin: 5px;
             font-size: 14px;
-        }
-        .file-info strong {
-            color: #2c3e50;
-        }
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-        .tab {
-            padding: 12px 24px;
-            background: #ecf0f1;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px 8px 0 0;
-            margin-right: 5px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .tab.active {
-            background: #3498db;
-            color: white;
-        }
-        .tab:hover {
-            background: #3498db;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .files-list {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #ecf0f1;
             transition: background 0.3s ease;
         }
-        .file-item:hover {
-            background: #f8f9fa;
+        .download-link:hover {
+            background: #229954;
         }
-        .file-item:last-child {
-            border-bottom: none;
+        .summary {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
         }
-        .file-details {
-            flex: 1;
+        .summary h4 {
+            margin-top: 0;
+            color: #2c3e50;
         }
-        .file-actions {
+        .summary-stats {
             display: flex;
-            gap: 10px;
+            justify-content: space-around;
+            margin-top: 10px;
         }
-        .btn-small {
-            padding: 6px 12px;
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .stat-label {
             font-size: 12px;
-            width: auto;
-            margin: 0;
+            color: #7f8c8d;
         }
-        .btn-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-        }
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c82333, #a71e2a);
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .pagination button {
-            width: auto;
-            padding: 8px 16px;
-            margin: 0;
-        }
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .status-online {
-            background: #28a745;
-        }
-        .status-offline {
-            background: #dc3545;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📄 PDF to DOCX Converter API</h1>
+        <h1>📄 PDF to DOCX Converter</h1>
         
-        <div class="api-info">
-            <h3>🌍 API Status: <span id="apiStatus" class="status-indicator status-offline"></span><span id="statusText">Checking...</span></h3>
-            <p><strong>Location:</strong> Bhopal, India | <strong>Version:</strong> 1.0.0</p>
-            <h4>Available Endpoints:</h4>
-            <pre>
-GET  /health     - Health check
-POST /convert    - Convert PDF to DOCX
-GET  /download/:filename - Download converted file
-GET  /files      - List converted files
-DELETE /files/:filename - Delete file
-POST /cleanup    - Cleanup old files
-            </pre>
+        <div class="mode-toggle">
+            <button class="mode-btn active" onclick="switchMode('single')">Single File</button>
+            <button class="mode-btn" onclick="switchMode('batch')">Batch Upload</button>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('convert')">Convert PDF</button>
-            <button class="tab" onclick="showTab('files')">Manage Files</button>
-            <button class="tab" onclick="showTab('cleanup')">Cleanup</button>
+        <!-- Single File Upload -->
+        <div id="single-upload" class="upload-section">
+            <div class="form-group">
+                <label for="pdfFile">Select PDF File:</label>
+                <input type="file" id="pdfFile" accept=".pdf" />
+            </div>
+            <button onclick="convertSingle()" id="convertBtn">Convert to DOCX</button>
         </div>
 
-        <!-- Convert Tab -->
-        <div id="convert" class="tab-content active">
-            <form id="uploadForm">
-                <div class="form-group">
-                    <label for="pdfFile">📎 Select PDF File:</label>
-                    <input type="file" id="pdfFile" name="pdf" accept=".pdf" required>
-                    <small style="color: #7f8c8d;">Maximum file size: 50MB | Supported format: PDF only</small>
+        <!-- Batch Upload -->
+        <div id="batch-upload" class="upload-section hidden">
+            <div class="form-group">
+                <label>Upload Multiple PDF Files:</label>
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="pdfFiles" multiple accept=".pdf" />
+                    <div class="upload-text">📁 Drag & Drop PDF files here</div>
+                    <div class="upload-hint">or click to browse (max 10 files, 50MB each)</div>
                 </div>
-                <button type="submit" id="convertBtn">🔄 Convert to DOCX</button>
-            </form>
-            <div id="result" class="result"></div>
+            </div>
+            <div class="file-list" id="fileList" style="display: none;"></div>
+            <div class="progress-bar" id="progressBar" style="display: none;">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <button onclick="convertBatch()" id="convertBatchBtn" disabled>Convert All Files</button>
         </div>
 
-        <!-- Files Tab -->
-        <div id="files" class="tab-content">
-            <div class="form-group">
-                <label>📁 Converted Files:</label>
-                <button onclick="loadFiles()" class="btn-small">🔄 Refresh</button>
-            </div>
-            <div id="filesList" class="files-list">
-                <div class="loading">Loading files...</div>
-            </div>
-            <div id="pagination" class="pagination"></div>
-        </div>
+        <div id="result" class="result"></div>
 
-        <!-- Cleanup Tab -->
-        <div id="cleanup" class="tab-content">
-            <div class="form-group">
-                <label for="maxAge">🗑️ Cleanup Old Files:</label>
-                <select id="maxAge" style="padding: 10px; border-radius: 5px; border: 1px solid #ddd; width: 200px;">
-                    <option value="3600000">1 hour</option>
-                    <option value="86400000" selected>24 hours</option>
-                    <option value="604800000">7 days</option>
-                    <option value="2592000000">30 days</option>
-                </select>
-            </div>
-            <button onclick="cleanupFiles()" id="cleanupBtn">🧹 Cleanup Old Files</button>
-            <div id="cleanupResult" class="result"></div>
+        <div class="api-info">
+            <h3>API Information</h3>
+            <ul>
+                <li><strong>Single File:</strong> POST /convert</li>
+                <li><strong>Batch Upload:</strong> POST /convert-batch</li>
+                <li><strong>Health Check:</strong> GET /health</li>
+                <li><strong>Download:</strong> GET /download/:filename</li>
+            </ul>
+            <p><strong>Limits:</strong> Max 50MB per file, 10 files per batch, 200MB total</p>
         </div>
     </div>
 
     <script>
-        const API_BASE_URL = 'http://localhost:3000';
-        let currentPage = 1;
-        let totalPages = 1;
-        
-        // Check API health on page load
-        window.addEventListener('load', async () => {
-            await checkApiHealth();
-            loadFiles();
+        let currentMode = 'single';
+        let selectedFiles = [];
+        let uploadArea, fileList, progressBar, progressFill;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            uploadArea = document.getElementById('uploadArea');
+            fileList = document.getElementById('fileList');
+            progressBar = document.getElementById('progressBar');
+            progressFill = document.getElementById('progressFill');
+            
+            setupDragAndDrop();
+            setupFileInput();
         });
-        
-        async function checkApiHealth() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/health`);
-                const health = await response.json();
-                
-                const statusIndicator = document.getElementById('apiStatus');
-                const statusText = document.getElementById('statusText');
-                
-                if (health.status === 'OK') {
-                    statusIndicator.className = 'status-indicator status-online';
-                    statusText.textContent = 'Online';
-                    statusText.style.color = '#28a745';
-                } else {
-                    statusIndicator.className = 'status-indicator status-offline';
-                    statusText.textContent = 'Offline';
-                    statusText.style.color = '#dc3545';
-                }
-            } catch (error) {
-                const statusIndicator = document.getElementById('apiStatus');
-                const statusText = document.getElementById('statusText');
-                statusIndicator.className = 'status-indicator status-offline';
-                statusText.textContent = 'Offline';
-                statusText.style.color = '#dc3545';
-                console.error('API not reachable:', error);
-            }
-        }
-        
-        function showTab(tabName) {
-            // Hide all tab contents
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
+
+        function switchMode(mode) {
+            currentMode = mode;
             
-            // Remove active class from all tabs
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected tab content
-            document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
+            // Update button states
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
-            // Load data for specific tabs
-            if (tabName === 'files') {
-                loadFiles();
-            }
+            // Show/hide sections
+            document.getElementById('single-upload').classList.toggle('hidden', mode !== 'single');
+            document.getElementById('batch-upload').classList.toggle('hidden', mode !== 'batch');
+            
+            // Clear results
+            document.getElementById('result').style.display = 'none';
         }
-        
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+
+        function setupDragAndDrop() {
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files).filter(file => 
+                    file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+                );
+                
+                addFiles(files);
+            });
+        }
+
+        function setupFileInput() {
+            document.getElementById('pdfFiles').addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                addFiles(files);
+            });
+        }
+
+        function addFiles(files) {
+            files.forEach(file => {
+                if (selectedFiles.length >= 10) {
+                    alert('Maximum 10 files allowed');
+                    return;
+                }
+                
+                if (file.size > 50 * 1024 * 1024) {
+                    alert(`File ${file.name} is too large (max 50MB)`);
+                    return;
+                }
+                
+                selectedFiles.push({
+                    file: file,
+                    status: 'pending'
+                });
+            });
             
+            updateFileList();
+            updateConvertButton();
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+            updateConvertButton();
+        }
+
+        function updateFileList() {
+            if (selectedFiles.length === 0) {
+                fileList.style.display = 'none';
+                return;
+            }
+            
+            fileList.style.display = 'block';
+            fileList.innerHTML = '';
+            
+            selectedFiles.forEach((item, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = `file-item ${item.status}`;
+                
+                const fileSize = (item.file.size / (1024 * 1024)).toFixed(2);
+                
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-name">${item.file.name}</div>
+                        <div class="file-size">${fileSize} MB</div>
+                    </div>
+                    <span class="file-status status-${item.status}">${item.status}</span>
+                    <button class="remove-file" onclick="removeFile(${index})" ${item.status !== 'pending' ? 'disabled' : ''}>×</button>
+                `;
+                
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function updateConvertButton() {
+            const btn = document.getElementById('convertBatchBtn');
+            btn.disabled = selectedFiles.length === 0;
+        }
+
+        async function convertSingle() {
             const fileInput = document.getElementById('pdfFile');
-            const convertBtn = document.getElementById('convertBtn');
-            const resultDiv = document.getElementById('result');
+            const file = fileInput.files[0];
             
-            if (!fileInput.files[0]) {
+            if (!file) {
                 showResult('Please select a PDF file', 'error');
                 return;
             }
             
-            const formData = new FormData();
-            formData.append('pdf', fileInput.files[0]);
+            await convertFile(file, '/convert', 'pdf');
+        }
+
+        async function convertBatch() {
+            if (selectedFiles.length === 0) {
+                showResult('Please select files to convert', 'error');
+                return;
+            }
             
-            // Show loading state
-            convertBtn.disabled = true;
-            convertBtn.textContent = 'Converting...';
-            showResult('<div class="loading">🔄 Converting PDF to DOCX... Please wait.</div>', 'success');
+            // Calculate total size
+            const totalSize = selectedFiles.reduce((sum, item) => sum + item.file.size, 0);
+            if (totalSize > 200 * 1024 * 1024) {
+                showResult('Total file size exceeds 200MB limit', 'error');
+                return;
+            }
+            
+            await convertBatchFiles();
+        }
+
+        async function convertBatchFiles() {
+            const formData = new FormData();
+            selectedFiles.forEach(item => {
+                formData.append('pdfs', item.file);
+            });
+            
+            // Update UI for processing
+            selectedFiles.forEach(item => item.status = 'processing');
+            updateFileList();
+            
+            progressBar.style.display = 'block';
+            document.getElementById('convertBatchBtn').disabled = true;
             
             try {
-                const response = await fetch(`${API_BASE_URL}/convert`, {
+                const response = await fetch('/convert-batch', {
                     method: 'POST',
                     body: formData
                 });
@@ -395,150 +525,110 @@ POST /cleanup    - Cleanup old files
                 const result = await response.json();
                 
                 if (result.success) {
-                    const downloadUrl = `${API_BASE_URL}${result.data.downloadUrl}`;
-                    showResult(`
-                        <h3>✅ Conversion Successful!</h3>
-                        <div class="file-info">
-                            <p><strong>Original File:</strong> ${result.data.originalFile}</p>
-                            <p><strong>Converted File:</strong> ${result.data.convertedFile}</p>
-                            <p><strong>File Size:</strong> ${result.data.fileSize}</p>
-                            <p><strong>Output Path:</strong> ${result.data.outputPath}</p>
-                        </div>
-                        <a href="${downloadUrl}" class="download-link" download>📥 Download DOCX File</a>
-                    `, 'success');
-                    
-                    // Refresh files list
-                    loadFiles();
+                    showBatchResult(result);
                 } else {
-                    showResult(`❌ Error: ${result.message}`, 'error');
+                    showResult(`Batch conversion failed: ${result.message}`, 'error');
                 }
+                
             } catch (error) {
-                showResult(`❌ Network Error: ${error.message}`, 'error');
+                showResult(`Error: ${error.message}`, 'error');
+            } finally {
+                progressBar.style.display = 'none';
+                document.getElementById('convertBatchBtn').disabled = false;
+            }
+        }
+
+        async function convertFile(file, endpoint, fieldName) {
+            const formData = new FormData();
+            formData.append(fieldName, file);
+            
+            const convertBtn = document.getElementById('convertBtn');
+            convertBtn.disabled = true;
+            convertBtn.textContent = 'Converting...';
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`Conversion successful! <a href="${result.data.downloadUrl}" class="download-link">Download DOCX</a>`, 'success');
+                } else {
+                    showResult(`Conversion failed: ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                showResult(`Error: ${error.message}`, 'error');
             } finally {
                 convertBtn.disabled = false;
-                convertBtn.textContent = '🔄 Convert to DOCX';
-            }
-        });
-        
-        async function loadFiles(page = 1) {
-            const filesList = document.getElementById('filesList');
-            const pagination = document.getElementById('pagination');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/files?page=${page}&limit=10`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    currentPage = result.data.pagination.page;
-                    totalPages = result.data.pagination.pages;
-                    
-                    if (result.data.files.length === 0) {
-                        filesList.innerHTML = '<div class="loading">No converted files found.</div>';
-                        pagination.innerHTML = '';
-                    } else {
-                        let filesHtml = '';
-                        result.data.files.forEach(file => {
-                            const downloadUrl = `${API_BASE_URL}${file.downloadUrl}`;
-                            filesHtml += `
-                                <div class="file-item">
-                                    <div class="file-details">
-                                        <strong>${file.filename}</strong><br>
-                                        <small>Size: ${file.size} | Created: ${new Date(file.created).toLocaleString()}</small>
-                                    </div>
-                                    <div class="file-actions">
-                                        <a href="${downloadUrl}" class="download-link btn-small" download>📥 Download</a>
-                                        <button onclick="deleteFile('${file.filename}')" class="btn-small btn-danger">🗑️ Delete</button>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        filesList.innerHTML = filesHtml;
-                        
-                        // Add pagination
-                        if (totalPages > 1) {
-                            let paginationHtml = '';
-                            if (currentPage > 1) {
-                                paginationHtml += `<button onclick="loadFiles(${currentPage - 1})" class="btn-small">← Previous</button>`;
-                            }
-                            paginationHtml += `<span style="padding: 8px 16px;">Page ${currentPage} of ${totalPages}</span>`;
-                            if (currentPage < totalPages) {
-                                paginationHtml += `<button onclick="loadFiles(${currentPage + 1})" class="btn-small">Next →</button>`;
-                            }
-                            pagination.innerHTML = paginationHtml;
-                        } else {
-                            pagination.innerHTML = '';
-                        }
-                    }
-                } else {
-                    filesList.innerHTML = `<div class="error">Error: ${result.message}</div>`;
-                }
-            } catch (error) {
-                filesList.innerHTML = `<div class="error">Network Error: ${error.message}</div>`;
+                convertBtn.textContent = 'Convert to DOCX';
             }
         }
-        
-        async function deleteFile(filename) {
-            if (!confirm(`Are you sure you want to delete ${filename}?`)) {
-                return;
-            }
+
+        function showBatchResult(result) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
             
-            try {
-                const response = await fetch(`${API_BASE_URL}/files/${filename}`, {
-                    method: 'DELETE'
+            let html = `
+                <h3>Batch Conversion Complete</h3>
+                <div class="summary">
+                    <h4>Summary</h4>
+                    <div class="summary-stats">
+                        <div class="stat">
+                            <div class="stat-number">${result.summary.totalFiles}</div>
+                            <div class="stat-label">Total Files</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${result.summary.successful}</div>
+                            <div class="stat-label">Successful</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">${result.summary.failed}</div>
+                            <div class="stat-label">Failed</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (result.results && result.results.length > 0) {
+                html += '<h4>Successfully Converted:</h4><div class="download-links">';
+                result.results.forEach(item => {
+                    html += `<a href="${item.downloadUrl}" class="download-link">${item.originalFile}</a>`;
                 });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('File deleted successfully!');
-                    loadFiles(currentPage);
-                } else {
-                    alert(`Error: ${result.message}`);
-                }
-            } catch (error) {
-                alert(`Network Error: ${error.message}`);
+                html += '</div>';
             }
-        }
-        
-        async function cleanupFiles() {
-            const maxAge = document.getElementById('maxAge').value;
-            const cleanupBtn = document.getElementById('cleanupBtn');
-            const cleanupResult = document.getElementById('cleanupResult');
             
-            cleanupBtn.disabled = true;
-            cleanupBtn.textContent = 'Cleaning...';
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/cleanup`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ maxAge: parseInt(maxAge) })
+            if (result.errors && result.errors.length > 0) {
+                html += '<h4>Failed Conversions:</h4><ul>';
+                result.errors.forEach(error => {
+                    html += `<li><strong>${error.originalFile}:</strong> ${error.error}</li>`;
                 });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult(`✅ ${result.message}`, 'success', cleanupResult);
-                    loadFiles();
-                } else {
-                    showResult(`❌ Error: ${result.message}`, 'error', cleanupResult);
-                }
-            } catch (error) {
-                showResult(`❌ Network Error: ${error.message}`, 'error', cleanupResult);
-            } finally {
-                cleanupBtn.disabled = false;
-                cleanupBtn.textContent = '🧹 Cleanup Old Files';
+                html += '</ul>';
             }
-        }
-        
-        function showResult(message, type, element = null) {
-            const resultDiv = element || document.getElementById('result');
-            resultDiv.innerHTML = message;
-            resultDiv.className = `result ${type}`;
+            
+            resultDiv.innerHTML = html;
             resultDiv.style.display = 'block';
         }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+
+        // Health check on page load
+        fetch('/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Health:', data);
+            })
+            .catch(error => {
+                console.error('API Health Check Failed:', error);
+            });
     </script>
 </body>
 </html>

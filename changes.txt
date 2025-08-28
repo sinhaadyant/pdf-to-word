@@ -1,0 +1,102 @@
+Things to Remember for Backend
+1. Constants & Configurations
+
+✅ Define constants in a separate config file (config/constants.js):
+
+Allowed file types (application/pdf).
+
+Max file size (e.g., 10MB).
+
+Upload directory (e.g., /uploads).
+
+Temp/Output directory for converted DOCX files.
+
+✅ Use dotenv (.env) for:
+
+Port
+
+Python executable path
+
+Any 3rd-party API keys (if used later)
+
+2. Validations
+
+File validation
+
+Reject non-PDF uploads.
+
+Restrict file size.
+
+Ensure filename sanitization (avoid path traversal attacks).
+
+Request validation
+
+Use Zod / Joi for validating request bodies.
+
+If extending API later (e.g., batch upload, metadata), validate strictly.
+
+3. Security
+
+✅ Sanitize uploaded file names.
+
+ 
+✅ Delete files after processing to avoid storage bloat.
+
+✅ Implement rate limiting & request size limiting to avoid DoS attacks.
+
+✅ Use HTTPS if in production.
+
+4. Error Handling
+
+✅ Wrap  Python calls with try-catch.
+
+✅ Provide clear error messages if:
+
+Python script fails
+
+File not supported
+
+Conversion timeout
+
+✅ Use a centralized error handler middleware in Express.
+
+5. Performance
+
+✅ Run Python script asynchronously (don’t block Node.js event loop).
+  
+6. Logging
+
+✅ Use winston or pino for logging:
+
+Request logs
+
+Conversion success/failure logs
+
+Error stack traces
+
+✅ Save logs with timestamps for debugging.
+
+7. Folder Structure (Recommended)
+backend/
+ ├── config/
+ │   └── constants.js
+ ├── controllers/
+ │   └── fileController.js
+ ├── routes/
+ │   └── fileRoutes.js
+ ├── middlewares/
+ │   └── errorHandler.js
+ │   └── validateFile.js
+ ├── uploads/
+ ├── converted/
+ ├── app.js
+ ├── server.js
+ └── package.json
+
+8. Future Enhancements
+
+Multiple file uploads (batch processing).
+
+Queue system for large PDFs.
+
+Conversion progress tracking.

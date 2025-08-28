@@ -1,37 +1,29 @@
 # PDF to DOCX Converter API
 
-A high-performance REST API for converting PDF files to DOCX format using the pdf2docx Python library. Built with Node.js and Express.
+A robust REST API for converting PDF files to DOCX format using the `pdf2docx` Python library. Built with Node.js and Express, featuring multi-file upload support, comprehensive validation, and production-ready architecture.
 
-**🌍 Location:** Bhopal, India  
-**🚀 Version:** 1.0.0  
-**📄 License:** MIT
+## 🚀 Features
 
-## Features
+- **Single & Batch File Conversion**: Convert one or multiple PDF files simultaneously
+- **Comprehensive Validation**: File type, size, and security validation
+- **Production Ready**: Rate limiting, error handling, logging, and security measures
+- **Auto Cleanup**: Automatic cleanup of temporary files
+- **Progress Tracking**: Real-time conversion progress for batch operations
+- **RESTful API**: Clean, well-documented REST endpoints
+- **Cross-Platform**: Works on Windows, macOS, and Linux
 
-- ✅ **Fast PDF to DOCX Conversion** - Powered by pdf2docx Python library
-- ✅ **RESTful API** - Clean, documented endpoints
-- ✅ **File Validation** - Comprehensive file type and size validation
-- ✅ **Security** - Directory traversal protection, input sanitization
-- ✅ **File Management** - Upload, convert, download, and cleanup
-- ✅ **Error Handling** - Detailed error messages and logging
-- ✅ **Modern UI** - Beautiful test client interface
-- ✅ **Pagination** - Efficient file listing with pagination
-- ✅ **Automatic Cleanup** - Temporary file management
+## 📋 Prerequisites
 
-## Quick Start
+- **Node.js** (v14.0.0 or higher)
+- **Python** (v3.7 or higher)
+- **pdf2docx** Python library
 
-### Prerequisites
-
-- Node.js (v14 or higher)
-- Python (v3.6 or higher)
-- Git
-
-### Installation
+## 🛠️ Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd pdf2docx-master
+   git clone https://github.com/yourusername/pdf2docx-api.git
+   cd pdf2docx-api
    ```
 
 2. **Install Node.js dependencies**
@@ -41,266 +33,266 @@ A high-performance REST API for converting PDF files to DOCX format using the pd
 
 3. **Install Python dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install pdf2docx
    ```
 
-4. **Start the server**
+4. **Set up environment variables**
    ```bash
-   npm start
+   cp env.example .env
+   # Edit .env file with your configuration
    ```
 
-5. **Test the API**
-   - Open `test-client.html` in your browser
-   - Or use the health endpoint: `http://localhost:3000/health`
+5. **Create required directories**
+   ```bash
+   npm run setup
+   ```
 
-## API Endpoints
+## 🚀 Quick Start
 
-### Health Check
+### Development Mode
 ```bash
+npm run dev
+```
+
+### Production Mode
+```bash
+npm start
+```
+
+The API will be available at `http://localhost:3000`
+
+## 📚 API Documentation
+
+### Base URL
+```
+http://localhost:3000/api
+```
+
+### Endpoints
+
+#### Health Check
+```http
 GET /health
 ```
 
-### Convert PDF to DOCX
-```bash
-POST /convert
-Content-Type: multipart/form-data
-Body: pdf file
-```
-
-### Download Converted File
-```bash
-GET /download/:filename
-```
-
-### List Converted Files
-```bash
-GET /files?page=1&limit=10
-```
-
-### Delete File
-```bash
-DELETE /files/:filename
-```
-
-### Cleanup Old Files
-```bash
-POST /cleanup
-Content-Type: application/json
-Body: {"maxAge": 86400000}
-```
-
-## Usage Examples
-
-### Using cURL
-
-```bash
-# Health check
-curl http://localhost:3000/health
-
-# Convert PDF
-curl -X POST -F "pdf=@document.pdf" http://localhost:3000/convert
-
-# List files
-curl http://localhost:3000/files
-
-# Download file
-curl -O http://localhost:3000/download/document-1704110400000.docx
-
-# Delete file
-curl -X DELETE http://localhost:3000/files/document-1704110400000.docx
-
-# Cleanup old files
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"maxAge": 86400000}' \
-  http://localhost:3000/cleanup
-```
-
-### Using JavaScript
-
-```javascript
-// Convert PDF
-const formData = new FormData();
-formData.append('pdf', fileInput.files[0]);
-
-const response = await fetch('http://localhost:3000/convert', {
-  method: 'POST',
-  body: formData
-});
-
-const result = await response.json();
-console.log(result);
-```
-
-## File Requirements
-
-- **File Type:** PDF only
-- **Maximum Size:** 50MB
-- **File Status:** Must not be empty or corrupted
-- **Encoding:** UTF-8 compatible
-
-## Security Features
-
-1. **File Type Validation** - Only PDF files accepted
-2. **File Size Limits** - Maximum 50MB per file
-3. **Directory Traversal Protection** - Prevents path manipulation attacks
-4. **Input Sanitization** - Filenames are sanitized
-5. **Temporary File Cleanup** - Uploaded files are automatically removed
-6. **Process Timeout** - 5-minute timeout for conversion process
-
-## Error Handling
-
-The API returns consistent error responses:
-
+**Response:**
 ```json
 {
-  "success": false,
-  "error": "Error type",
-  "message": "Detailed error message",
-  "timestamp": "2024-01-01T12:00:00.000Z"
+  "status": "OK",
+  "message": "PDF to DOCX API is running",
+  "version": "2.0.0",
+  "features": ["single-file", "multi-file", "batch-processing"],
+  "limits": {
+    "maxFileSize": "50MB",
+    "maxFilesPerRequest": 10,
+    "maxTotalSize": "200MB"
+  }
 }
 ```
 
-### Common Error Codes
+#### Single File Conversion
+```http
+POST /convert
+Content-Type: multipart/form-data
 
-- `LIMIT_FILE_SIZE` - File exceeds 50MB limit
-- `LIMIT_FILE_COUNT` - More than one file uploaded
-- `INVALID_FILE_TYPE` - Non-PDF file uploaded
-- `EMPTY_FILE` - File is empty or corrupted
-- `CONVERSION_TIMEOUT` - Conversion process took too long
-
-## Project Structure
-
-```
-pdf2docx-master/
-├── pdf2docx/           # Core Python conversion engine
-├── server.js           # Node.js API server
-├── package.json        # Node.js dependencies
-├── test-client.html    # API testing interface
-├── requirements.txt    # Python dependencies
-├── README.md          # Project documentation
-├── API.md             # Detailed API documentation
-├── samples/           # Sample PDF files
-├── uploads/           # Upload directory (auto-created)
-├── outputs/           # Output directory (auto-created)
-└── node_modules/      # Node.js dependencies
+Form Data:
+- pdf: [PDF file]
 ```
 
-## Development
-
-### Available Scripts
-
-```bash
-npm start          # Start production server
-npm run dev        # Start development server with nodemon
-npm run clean      # Clean uploads and outputs directories
-npm run test-api   # Test API health endpoint
+**Response:**
+```json
+{
+  "success": true,
+  "message": "PDF converted successfully to DOCX",
+  "data": {
+    "originalFile": "document.pdf",
+    "convertedFile": "document-1234567890.docx",
+    "fileSize": "2.5 MB",
+    "downloadUrl": "/api/download/document-1234567890.docx",
+    "timestamp": "2023-12-01T10:30:00.000Z"
+  }
+}
 ```
+
+#### Batch File Conversion
+```http
+POST /convert-batch
+Content-Type: multipart/form-data
+
+Form Data:
+- pdfs: [PDF file 1]
+- pdfs: [PDF file 2]
+- pdfs: [PDF file 3]
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "All 3 files converted successfully",
+  "summary": {
+    "totalFiles": 3,
+    "successful": 3,
+    "failed": 0
+  },
+  "results": [
+    {
+      "originalFile": "document1.pdf",
+      "convertedFile": "document1-1234567890.docx",
+      "fileSize": "1.2 MB",
+      "downloadUrl": "/api/download/document1-1234567890.docx",
+      "status": "success"
+    }
+  ],
+  "errors": []
+}
+```
+
+#### Download Converted File
+```http
+GET /download/:filename
+```
+
+#### List Converted Files
+```http
+GET /files?page=1&limit=10
+```
+
+#### Get File Information
+```http
+GET /files/:filename/info
+```
+
+#### Delete File
+```http
+DELETE /files/:filename
+```
+
+## 🔧 Configuration
 
 ### Environment Variables
 
-- `PORT` - Server port (default: 3000)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | 3000 | Server port |
+| `NODE_ENV` | development | Environment mode |
+| `MAX_FILE_SIZE` | 52428800 | Max file size in bytes (50MB) |
+| `MAX_FILES_PER_REQUEST` | 10 | Max files per batch request |
+| `MAX_TOTAL_SIZE` | 209715200 | Max total size per batch (200MB) |
+| `CONVERSION_TIMEOUT` | 300000 | Conversion timeout in ms (5min) |
+| `CLEANUP_INTERVAL` | 86400000 | Cleanup interval in ms (24h) |
+| `RATE_LIMIT_MAX` | 100 | Max requests per 15 minutes |
 
-### Testing
+### File Limits
 
-1. **Start the server**
-   ```bash
-   npm run dev
-   ```
+- **Single File**: Maximum 50MB
+- **Batch Upload**: Maximum 10 files per request
+- **Total Size**: Maximum 200MB per batch
+- **Supported Format**: PDF only
 
-2. **Open test client**
-   - Open `test-client.html` in your browser
-   - Upload a PDF file and test conversion
+## 🏗️ Project Structure
 
-3. **API testing**
-   ```bash
-   npm run test-api
-   ```
+```
+pdf2docx-api/
+├── config/
+│   └── config.js          # Application configuration
+├── middleware/
+│   ├── errorHandler.js    # Global error handling
+│   ├── requestLogger.js   # Request logging
+│   └── rateLimiter.js     # Rate limiting
+├── routes/
+│   ├── convert.js         # Conversion endpoints
+│   └── download.js        # File management endpoints
+├── utils/
+│   ├── validation.js      # File validation utilities
+│   ├── converter.js       # PDF conversion utilities
+│   └── fileManager.js     # File management utilities
+├── constants.js           # Application constants
+├── server.js              # Main server file
+├── test-client.html       # Test client interface
+├── package.json           # Dependencies and scripts
+└── README.md             # This file
+```
 
-## Deployment
+## 🧪 Testing
 
-### Local Deployment
+### Run Tests
+```bash
+npm test
+```
 
-1. Install dependencies
-2. Start server: `npm start`
-3. Access API at `http://localhost:3000`
+### Run Tests in Watch Mode
+```bash
+npm run test:watch
+```
 
-### Production Deployment
+### Health Check
+```bash
+npm run health
+```
 
-1. Set environment variables
-2. Use process manager (PM2, Forever)
-3. Configure reverse proxy (Nginx, Apache)
-4. Set up SSL certificates
-5. Configure firewall rules
+## 🛡️ Security Features
+
+- **File Validation**: Comprehensive file type and size validation
+- **Rate Limiting**: Prevents API abuse and DoS attacks
+- **Input Sanitization**: Prevents directory traversal attacks
+- **Error Handling**: Secure error messages (no sensitive data exposure)
+- **CORS Protection**: Configurable cross-origin resource sharing
+- **Request Size Limits**: Prevents large payload attacks
+
+## 📊 Monitoring & Logging
+
+- **Request Logging**: All requests logged with timestamps and performance metrics
+- **Error Logging**: Detailed error logging with stack traces
+- **Performance Metrics**: Response time tracking
+- **Health Monitoring**: Built-in health check endpoint
+
+## 🚀 Deployment
 
 ### Docker Deployment
 
-```dockerfile
-FROM node:16-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
+1. **Build Docker image**
+   ```bash
+   npm run docker:build
+   ```
 
-## Performance
+2. **Run Docker container**
+   ```bash
+   npm run docker:run
+   ```
 
-- **Conversion Speed:** Depends on PDF complexity and size
-- **Concurrent Requests:** Limited by system resources
-- **Memory Usage:** Optimized for large files
-- **Timeout:** 5 minutes per conversion
+### Production Considerations
 
-## Troubleshooting
+- Use environment variables for configuration
+- Set up proper logging (Winston/Pino)
+- Use Redis for rate limiting in production
+- Set up monitoring and alerting
+- Use HTTPS in production
+- Configure proper CORS settings
 
-### Common Issues
-
-1. **Python not found**
-   - Ensure Python is installed and in PATH
-   - Use `py` command on Windows
-
-2. **Conversion fails**
-   - Check PDF file integrity
-   - Verify file size limits
-   - Check Python dependencies
-
-3. **Port already in use**
-   - Change PORT environment variable
-   - Kill existing process
-
-4. **File upload errors**
-   - Check file type and size
-   - Verify network connection
-   - Check disk space
-
-### Logs
-
-Check console output for detailed error messages and conversion logs.
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 🆘 Support
 
-- **Documentation:** See `API.md` for detailed API documentation
-- **Issues:** Create an issue in the repository
-- **Questions:** Check the troubleshooting section
+- **Issues**: [GitHub Issues](https://github.com/yourusername/pdf2docx-api/issues)
+- **Documentation**: [API Documentation](https://github.com/yourusername/pdf2docx-api/wiki)
+- **Email**: your.email@example.com
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- **pdf2docx** - Core conversion library
-- **Express.js** - Web framework
-- **Multer** - File upload handling
-- **Bhopal, India** - Development location
+- [pdf2docx](https://github.com/dothinking/pdf2docx) - Python library for PDF to DOCX conversion
+- [Express.js](https://expressjs.com/) - Web application framework
+- [Multer](https://github.com/expressjs/multer) - File upload middleware
 
 ---
 
